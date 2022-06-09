@@ -60,6 +60,10 @@ const vehicleSchema = new Schema({
     type: String,
     required: true,
   },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
   model: {
     type: String,
     required: true,

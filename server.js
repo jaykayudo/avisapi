@@ -108,6 +108,13 @@ app.post("api/register-staff", async (req, res) => {
     res.status(404).json({ message: "Invalid Entry" });
   }
 });
+app.post("api/register-vehicle", async (req, res) => {
+  if (req.body && req.files) {
+    const vehicleName = req.body.vehicleName;
+  } else {
+    res.status(404).json({ message: "Invalid Entry" });
+  }
+});
 app.get("api/members-list", async (req, res) => {
   await User.find()
     .then((result) => {
@@ -126,9 +133,18 @@ app.get("api/vehicles-list", async (req, res) => {
       res.status(500).send(err);
     });
 });
-app.get("api/datas", async (req, res) => {
+app.get("api/dashboard-datas", async (req, res) => {
   const users = await User.find();
   const staffs = await Staff.find();
-  const vehicle = await Vehicle.find();
+  const vehicle = await Vehicle.find({ verified: false });
+  res.json({ users: users, vehicles: vehicles, staffs: staffs });
+});
+app.get("api/vehicles-list/:id/verify", async (req, res) => {
+  await Vehicle.findOne({ id: req.params.id }).then(async (result) => {
+    result.verified = true;
+    await result.save().then((data) => {
+      res.status(200).json(data);
+    });
+  });
   res.json({ users: users, vehicles: vehicles, staffs: staffs });
 });

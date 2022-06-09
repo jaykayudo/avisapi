@@ -94,9 +94,9 @@ const vehicleSchema = new Schema({
   },
 });
 
-const User = mongoose.Model("User", userSchema);
-const Staff = mongoose.Model("Staff", staffSchema);
-const Vehicle = mongoose.Model("Vehicle", vehicleSchema);
+const User = mongoose.model("User", userSchema);
+const Staff = mongoose.model("Staff", staffSchema);
+const Vehicle = mongoose.model("Vehicle", vehicleSchema);
 
 exports.User = User;
 exports.Vehicle = Vehicle;

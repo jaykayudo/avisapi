@@ -7,13 +7,15 @@ const jwt = require("jsonwebtoken");
 const User = Model.User;
 const Vehicle = Model.Vehicle;
 const Staff = Model.Staff;
-mongoose.connect(process.env.DB_STRING, () => {
+mongoose.connect(process.env.DB_STRING).then((result) => {
   app.listen(process.env.PORT || 3000);
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get("api/user/login", async (req, res) => {
+app.get("", (req, res) => {
+  res.send("share");
+});
+app.post("/api/user/login", async (req, res) => {
   if (req.body) {
     const email = req.body.email;
     const password = req.body.password;
@@ -35,9 +37,8 @@ app.get("api/user/login", async (req, res) => {
   } else {
     res.status(404).json({ message: "Invalid Entry" });
   }
-  <input type="hidden" name="category" value="staff" />;
 });
-app.post("api/user/register-admin", async (req, res) => {
+app.post("/api/user/register-admin", async (req, res) => {
   if (req.body) {
     const email = req.body.email;
     const password = req.body.password;
@@ -73,7 +74,7 @@ app.post("api/user/register-admin", async (req, res) => {
     res.status(404).json({ message: "Invalid Entry" });
   }
 });
-app.post("api/register-staff", async (req, res) => {
+app.post("/api/register-staff", async (req, res) => {
   if (req.body) {
     const name = req.body.name;
     const department = req.body.department;
@@ -108,14 +109,14 @@ app.post("api/register-staff", async (req, res) => {
     res.status(404).json({ message: "Invalid Entry" });
   }
 });
-app.post("api/register-vehicle", async (req, res) => {
+app.post("/api/register-vehicle", async (req, res) => {
   if (req.body && req.files) {
     const vehicleName = req.body.vehicleName;
   } else {
     res.status(404).json({ message: "Invalid Entry" });
   }
 });
-app.get("api/members-list", async (req, res) => {
+app.get("/api/members-list", async (req, res) => {
   await User.find()
     .then((result) => {
       res.json(result);
@@ -124,7 +125,7 @@ app.get("api/members-list", async (req, res) => {
       res.status(500).send(err);
     });
 });
-app.get("api/vehicles-list", async (req, res) => {
+app.get("/api/vehicles-list", async (req, res) => {
   await Vehicle.find()
     .then((result) => {
       res.json(result);
@@ -133,18 +134,18 @@ app.get("api/vehicles-list", async (req, res) => {
       res.status(500).send(err);
     });
 });
-app.get("api/dashboard-datas", async (req, res) => {
+app.get("/api/dashboard-datas", async (req, res) => {
   const users = await User.find();
   const staffs = await Staff.find();
   const vehicle = await Vehicle.find({ verified: false });
-  res.json({ users: users, vehicles: vehicles, staffs: staffs });
+  res.send({ users: users, vehicles: vehicles, staffs: staffs });
+  // console.log({ users: users, vehicles: vehicle, staffs: staffs });
 });
-app.get("api/vehicles-list/:id/verify", async (req, res) => {
+app.get("/api/vehicles-list/:id/verify", async (req, res) => {
   await Vehicle.findOne({ id: req.params.id }).then(async (result) => {
     result.verified = true;
     await result.save().then((data) => {
       res.status(200).json(data);
     });
   });
-  res.json({ users: users, vehicles: vehicles, staffs: staffs });
 });

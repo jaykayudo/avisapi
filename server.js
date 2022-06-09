@@ -109,13 +109,7 @@ app.post("/api/register-staff", async (req, res) => {
     res.status(404).json({ message: "Invalid Entry" });
   }
 });
-app.post("/api/register-vehicle", async (req, res) => {
-  if (req.body && req.files) {
-    const vehicleName = req.body.vehicleName;
-  } else {
-    res.status(404).json({ message: "Invalid Entry" });
-  }
-});
+
 app.get("/api/members-list", async (req, res) => {
   await User.find()
     .then((result) => {
@@ -142,10 +136,44 @@ app.get("/api/dashboard-datas", async (req, res) => {
   // console.log({ users: users, vehicles: vehicle, staffs: staffs });
 });
 app.get("/api/vehicles-list/:id/verify", async (req, res) => {
-  await Vehicle.findOne({ id: req.params.id }).then(async (result) => {
-    result.verified = true;
-    await result.save().then((data) => {
-      res.status(200).json(data);
+  await Vehicle.findOne({ id: req.params.id })
+    .then(async (result) => {
+      if (result) {
+        result.verified = true;
+        await result.save().then((data) => {
+          res.status(200).json(data);
+        });
+      } else {
+        res.status(404).json({ message: "No Data Found" });
+      }
+    })
+    .catch((err) => {
+      res.status(404).json({ message: "No Data Found" });
     });
-  });
+});
+app.post("/api/register-vehicle", async (req, res) => {
+  if (req.body && req.files) {
+    const vehicle = new Vehicle();
+    vehicle.name = req.body.name;
+    vehicle.staffReg = req.body.staffReg;
+    vehicle.model = req.body.model;
+    vehicle.plateNo = req.body.plateNo;
+    vehicle.idNumber = req.body.idNumber;
+    vehicle.position = req.body.position;
+    vehicle.department = req.body.department;
+    const file = req.files.file;
+    const dirname = "./uploads/";
+    file.mv(dirname + file.name);
+    vehicle.imagePath = "/uploads/" + file.name;
+    await vehicle
+      .save()
+      .then((result) => {
+        res.status(200).json({ message: "Vehicle Registered" });
+      })
+      .catch((err) => {
+        res.status(404).json({ message: "Error Occurred" });
+      });
+  } else {
+    res.status(500).json({ message: "Invalid Entry" });
+  }
 });

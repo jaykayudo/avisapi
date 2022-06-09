@@ -138,7 +138,7 @@ app.get("/api/dashboard-datas", async (req, res) => {
   const users = await User.find();
   const staffs = await Staff.find();
   const vehicle = await Vehicle.find({ verified: false });
-  res.send({ users: users, vehicles: vehicles, staffs: staffs });
+  res.send({ users: users, vehicles: vehicle, staffs: staffs });
   // console.log({ users: users, vehicles: vehicle, staffs: staffs });
 });
 app.get("/api/vehicles-list/:id/verify", async (req, res) => {
